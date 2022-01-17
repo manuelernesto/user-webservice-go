@@ -12,7 +12,18 @@ type userController struct {
 }
 
 func (uc userController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello from user controller!"))
+	if r.URL.Path == "/users" {
+		switch r.Method {
+		case http.MethodGet:
+			uc.getAll(w, r)
+		case http.MethodPost:
+			uc.post(w, r)
+		default:
+			w.WriteHeader(http.StatusNotImplemented)
+		}
+	} else {
+
+	}
 }
 
 func (uc *userController) getAll(w http.ResponseWriter, r *http.Request) {
