@@ -40,19 +40,20 @@ func GetUserByID(id int) (User, error) {
 	return User{}, fmt.Errorf("user with ID '%v' not found", id)
 }
 
-func UpdateUser(id int) (User, error) {
-	for _, user := range users {
-		if user.ID == id {
-			return *user, nil
+func UpdateUser(u User) (User, error) {
+	for i, user := range users {
+		if user.ID == u.ID {
+			users[i] = &u
+			return u, nil
 		}
 	}
-	return User{}, fmt.Errorf("user with ID '%v' not found", id)
+	return User{}, fmt.Errorf("user with ID '%v' not found", u.ID)
 }
 
 func RemoveUserByID(id int) error {
 	for i, user := range users {
 		if user.ID == id {
-			users = append(users[:1], users[i+1:]...)
+			users = append(users[:i], users[i+1:]...)
 		}
 	}
 	return fmt.Errorf("user with ID '%v' not found", id)
