@@ -1,8 +1,8 @@
 package main
 
 import (
-	"getstarted/demo/controllers"
 	"net/http"
+	"user-service/controllers"
 )
 
 func main() {
