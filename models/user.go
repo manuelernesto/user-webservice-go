@@ -54,6 +54,7 @@ func RemoveUserByID(id int) error {
 	for i, user := range users {
 		if user.ID == id {
 			users = append(users[:i], users[i+1:]...)
+
 		}
 	}
 	return fmt.Errorf("user with ID '%v' not found", id)

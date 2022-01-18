@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"regexp"
+	"strconv"
 	"user-service/models"
 )
 
@@ -22,11 +23,29 @@ func (uc userController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNotImplemented)
 		}
 	} else {
-
+		matches := uc.userIDPattern.FindStringSubmatch(r.URL.Path)
+		if len(matches) == 0 {
+			w.WriteHeader(http.StatusNotFound)
+		}
+		id, err := strconv.Atoi(matches[1])
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+		}
+		switch r.Method {
+		case http.MethodGet:
+			uc.get(id, w)
+		case http.MethodPut:
+			uc.put(id, w, r)
+		case http.MethodDelete:
+			uc.delete(id, w)
+		default:
+			w.WriteHeader(http.StatusNotImplemented)
+		}
 	}
 }
 
 func (uc *userController) getAll(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
 	encodeResponseAsJSON(models.GetUsers(), w)
 }
 
@@ -40,6 +59,8 @@ func (uc *userController) get(id int, w http.ResponseWriter) {
 }
 
 func (uc *userController) post(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+
 	u, err := uc.parseRequest(r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -54,6 +75,7 @@ func (uc *userController) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusCreated)
 	encodeResponseAsJSON(u, w)
 }
 
